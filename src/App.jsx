@@ -1,20 +1,47 @@
 import axios from "axios";
 import { useRef, useState } from "react"
-import { useEffect } from "react";
 import { youtube_parser } from "./utils";
 // import fileDownload from 'js-file-download'
 
 function App() {
   const inputUrlRef = useRef();
-  const inputUsernameRef = useRef();
-  const inputPasswordRef = useRef();
   const [urlResultA, setUrlResultA] = useState(null);
   const [urlResultV, setUrlResultV] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [showLoginForm, setShowLoginForm] = useState(false); // Track whether to show the login form
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [enteredUsername, setEnteredUsername] = useState('');
+  const [enteredPassword, setEnteredPassword] = useState('');
+
+  const toggleLoginModal = () => {
+    setShowLoginForm(!showLoginForm);
+  };
 
   const username = "deep";
   const password = "welcome1";
+
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+
+  //   if (loggedIn) {
+  //     // If already logged in, perform logout
+  //     setLoggedIn(false);
+  //     setShowLoginForm(false);
+  //     return;
+  //   }
+
+  //   const enteredUsername = inputUsernameRef.current.value;
+  //   const enteredPassword = inputPasswordRef.current.value;
+
+  //   if (enteredUsername === username && enteredPassword === password) {
+  //     setLoggedIn(true);
+  //     setShowLoginForm(false);
+  //   } else {
+  //     alert("Invalid credentials. Please try again.");
+  //   }
+
+  //   inputUsernameRef.current.value = "";
+  //   inputPasswordRef.current.value = "";
+  // };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -23,21 +50,23 @@ function App() {
       // If already logged in, perform logout
       setLoggedIn(false);
       setShowLoginForm(false);
+      setEnteredUsername('');
+      setEnteredPassword('');
       return;
     }
 
-    const enteredUsername = inputUsernameRef.current.value;
-    const enteredPassword = inputPasswordRef.current.value;
+    
+    const username = 'deep'; 
+    const password = 'welcome'; 
 
     if (enteredUsername === username && enteredPassword === password) {
       setLoggedIn(true);
       setShowLoginForm(false);
+      setEnteredUsername('');
+      setEnteredPassword('');
     } else {
       alert("Invalid credentials. Please try again.");
     }
-
-    inputUsernameRef.current.value = "";
-    inputPasswordRef.current.value = "";
   };
 
   const handleLogout = () => {
@@ -127,83 +156,41 @@ function App() {
   }
 
   return (
-    //   <div className="app">
-    //     {loggedIn ? (
-    //       <button onClick={handleLogout}>Log Out</button>
-    //     ) : (
-    //       <form className="login-form" onSubmit={handleLogin}>
-    //         <input
-    //           type="text"
-    //           placeholder="Username"
-    //           ref={inputUsernameRef}
-    //           required
-    //         />
-    //         <input
-    //           type="password"
-    //           placeholder="Password"
-    //           ref={inputPasswordRef}
-    //           required
-    //         />
-    //         <button type="submit">Log In</button>
-    //       </form>
-    //     )}
-    //     <span className="logo">Gada</span>
-    //     <section className="content">
-    //       <h1 className="content_title">YouTube to MP3/Video Converter</h1>
-    //       <p className="content_description">
-    //         Transform YouTube videos into MP3/Mp4 in just a few clicks!
-    //       </p>
-
-    //       <form className="form">
-    //         <input ref={inputUrlRef} placeholder="Paste a Youtube video URL link..." className="form_input" type="text" />
-    //         {/* <button onClick={()=>{handleAudio;handleVideo}} type="submit" className="form_button">Search</button> */}
-    //         <button onClick={handleAudio} type="submit" className="form_button">Mp3</button>
-    //         <button onClick={handleVideo} type="submit" className="form_button">Video</button>
-
-    //       </form>
-
-    //       {urlResultA ? <a target='_blank' rel="noreferrer" href={urlResultA} className="download_btn my-2">Download MP3</a> : ''}
-    //       {urlResultV ? <a target='_blank' rel="noreferrer" href={urlResultV} className="form_button">Download Video</a> : ''}
-
-    //       {/* onClick={() => {
-    // 	fetch({urlResultV})
-    // 		.then(response => {
-    // 			response.blob().then(blob => {
-    // 				let url = window.URL.createObjectURL(blob);
-    // 				let a = document.createElement('a');
-    // 				a.href = url;
-    // 				a.download = `${youtubeID}`;
-    // 				a.click();
-    // 			});
-    // 			window.location.href = response.url;
-    // 	});
-    // }} */}
-    //     </section>
-    //   </div>
     <div className="app">
+
       <span className="logo">Gada</span>
       <button
         className="login-button"
-        onClick={() => setShowLoginForm(!showLoginForm)}
+        onClick={toggleLoginModal}
       >
-        {loggedIn ? "Log Out" : "Log In"}
+        {loggedIn ? 'Log Out' : 'Log In'}
       </button>
       {showLoginForm && !loggedIn && (
-        <form className="login-form" onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            ref={inputUsernameRef}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            ref={inputPasswordRef}
-            required
-          />
-          <button type="submit">Log In</button>
-        </form>
+        <div className="login-modal">
+          <div className="login-modal-content">
+            <span className="close" onClick={toggleLoginModal}>
+              &times;
+            </span>
+            <h2>Login</h2>
+            <form className="login-form" onSubmit={handleLogin}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={enteredUsername}
+                onChange={(e) => setEnteredUsername(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={enteredPassword}
+                onChange={(e) => setEnteredPassword(e.target.value)}
+                required
+              />
+              <button type="submit">Log In</button>
+            </form>
+          </div>
+        </div>
       )}
       <section className="content">
         <h1 className="content_title">YouTube to MP3/Video Converter</h1>
